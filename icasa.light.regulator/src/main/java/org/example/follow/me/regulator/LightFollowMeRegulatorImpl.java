@@ -73,41 +73,41 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 	/** Bind Method for binaryLights dependency */
 	@Bind(id = BLIGHT)
 	public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
-		log.info("bind binary light "+ binaryLight.getSerialNumber());
+		log.info("bind binary light ");
 		binaryLight.addListener(this);
 	}
 
 	/** Unbind Method for binaryLights dependency */
 	@Unbind(id = BLIGHT)
 	public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
-		log.info("unbind dimmer light " + binaryLight.getSerialNumber());
+		log.info("unbind dimmer light ");
 		binaryLight.removeListener(this);
 	}
 
 	/** Unbind Method for dependency */
 	@Unbind(id = DLIGHT)
 	public void unbindDimmerLight(DimmerLight dimmerLight, Map properties) {
-		log.info("unbind dimmerlight " + dimmerLight.getSerialNumber());
+		log.info("unbind dimmerlight ");
 		dimmerLight.removeListener(this);
 	}
 
 	@Bind(id = DLIGHT)
 	public void bindDimmerLight(DimmerLight dimmerLight, Map properties) {
-		log.info("bind dimmer light " + dimmerLight.getSerialNumber());
+		log.info("bind dimmer light ");
 		dimmerLight.addListener(this);
 	}
 
 	/** Bind Method for presenceSensors dependency */
 	@Bind(id = SENSOR)
 	public synchronized void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
-		log.info("bind presence sensor " + presenceSensor.getSerialNumber());
+		log.info("bind presence sensor ");
 		presenceSensor.addListener(this);
 	}
 
 	/** Unbind Method for presenceSensors dependency */
 	@Unbind(id = SENSOR)
 	public synchronized void unbindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
-		log.info("Unbind presence sensor " + presenceSensor.getSerialNumber());
+		log.info("Unbind presence sensor " );
 		presenceSensor.removeListener(this);
 	}
 
@@ -222,8 +222,6 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 		List<DimmerLight> dimmerLightLocation = new ArrayList<DimmerLight>();
 		for (DimmerLight dimLight : dimmerLights) {
-			log.info("\n dimmerlight=" + dimmerLightLocation.size()
-					+ "\n\n\n");
 			if (dimLight.getPropertyValue(LOCATION_PROPERTY_NAME).equals(location)) {
 				dimmerLightLocation.add(dimLight);
 			}
@@ -286,7 +284,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	private void controlDimmerLightsPerRoom(String location) {
 
-		log.info("\n_\n on est dans " + location + "\n\n");
+		log.info("\n_\n on est dans room:" + location + "\n\n");
 		// get the related binary lights
 		List<DimmerLight> lights = getDimmerLightFromLocation(location);
 		List<PresenceSensor> sensors = getPresenceSensorFromLocation(location);
@@ -315,7 +313,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 		//set maximum lights per room
 		this.maxLightsToTurnOnPerRoom=(int) (maximumEnergyConsumptionAllowedInARoom / defaultBinaryLightEnergyConsumption);
 		
-		System.out.println("\n_\n on est dans " + location + "\n\n"+maxLightsToTurnOnPerRoom+"\n\n\n\n");
+		log.info("\n_\n on est dans la piece:" + location + "\n\n"+maxLightsToTurnOnPerRoom+"\n\n\n\n");
 		// get the related binary lights
 		List<DimmerLight> lights = getDimmerLightFromLocation(location);
 		List<BinaryLight> binLights = getBinaryLightFromLocation(location);

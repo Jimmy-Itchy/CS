@@ -37,11 +37,13 @@ public class LightFollowMeManagerImpl implements FollowMeAdministration {
 	/** Bind Method for followMeConfiguration dependency */
 	@Bind(id = CONF)
 	public void bindFollowMeConfiguration(FollowMeConfiguration followMeConfiguration, Map properties) {
+		log.info("bind follow configuration");
 	}
 
 	/** Unbind Method for followMeConfiguration dependency */
 	@Unbind(id = CONF)
 	public void unbindFollowMeConfiguration(FollowMeConfiguration followMeConfiguration, Map properties) {
+		log.info("unbind follow configuration");
 	}
 	
 	/** Field for followMeConfiguration dependency */
@@ -51,11 +53,13 @@ public class LightFollowMeManagerImpl implements FollowMeAdministration {
 	/** Bind Method for followMeConfiguration dependency */
 	@Bind(id = CONFT)
 	public void bindTemperatureConfiguration(TemperatureConfiguration temperatureConfiguration, Map properties) {
+		log.info("bind temperature configuration");
 	}
 
 	/** Unbind Method for followMeConfiguration dependency */
 	@Unbind(id = CONFT)
 	public void unbindTemperatureConfiguration(TemperatureConfiguration temperatureConfiguration, Map properties) {
+		log.info("unbind temperature configuration");
 	}
 
 	/** Component Lifecycle Method */

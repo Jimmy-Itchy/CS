@@ -42,11 +42,13 @@ public class FollowMeManagerCommandImpl {
 	/** Bind Method for followMeCommand dependency */
 	@Bind(id=ADMIN)
 	public void bindFollowMeCommand(FollowMeAdministration followMeAdministration, Map properties) {
+		log.info("bind follow command");
 	}
 
 	/** Unbind Method for followMeCommand dependency */
 	@Unbind(id=ADMIN)
 	public void unbindFollowMeCommand(FollowMeAdministration followMeAdministration, Map properties) {
+		log.info("unbind follow command");
 	}
 
 	/** Component Lifecycle Method */
@@ -87,7 +89,8 @@ public class FollowMeManagerCommandImpl {
 
 	@Command
 	public void getIlluminancePreference() {
-		log.info("The illuminance goal is " + m_administrationService.getIlluminancePreference().toString());
+		String getteur=m_administrationService.getIlluminancePreference().toString();
+		log.info("\nThe illuminance goal is " + getteur);
 	}
 	
 	
@@ -104,14 +107,15 @@ public class FollowMeManagerCommandImpl {
 		} else if (HIGH.equals(goal)) {
 			m_administrationService.setEnergySavingGoal(EnergyGoal.HIGH);
 		} else {
-			log.info("Incorrect command please retry\n");
+			log.info("\nIncorrect command please retry\n");
 		}
 
 	}
 
 	@Command
 	public void getEnergyGoalPreference() {
-		log.info("The energy goal is " + m_administrationService.getEnergyGoal().toString());
+		String getteur=m_administrationService.getEnergyGoal().toString();
+		log.info("\nThe energy goal is :" +getteur );
 	}
 	
 	 // Each command should start with a @Command annotation

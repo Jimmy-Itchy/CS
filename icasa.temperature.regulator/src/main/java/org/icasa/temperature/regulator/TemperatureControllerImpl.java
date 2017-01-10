@@ -113,17 +113,17 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 
 	@Override
 	public void deviceAdded(GenericDevice arg0) {
-
+		log.info("deviceadded");
 	}
 
 	@Override
 	public void deviceEvent(GenericDevice arg0, Object arg1) {
-
+		log.info("deviceEvent");
 	}
 
 	@Override
 	public void devicePropertyAdded(GenericDevice arg0, String arg1) {
-
+		log.info("deviceProperty");
 	}
 
 	@Override
