@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
@@ -12,7 +13,6 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.example.follow.me.api.TemperatureConfiguration;
-
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
@@ -25,6 +25,11 @@ import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 @Provides(specifications = {TemperatureConfiguration.class,PeriodicRunnable.class})
 public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnable, TemperatureConfiguration {
 
+	private static Logger log = Logger.getLogger(TemperatureControllerImpl.class.getName());
+	private static final String COOL="cool";
+	private static final String HEAT="heat";
+	private static final String THERMO="thermo";
+	
 	/**
 	 * The name of the LOCATION property
 	 */
@@ -35,6 +40,11 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 	 */
 	public static final String LOCATION_UNKNOWN = "unknown";
 
+	private static final String KITCHEN="kitchen";
+	private static final String LIVINGROOM="livingroom";
+	private static final String BATHROOM="bathroom";
+	private static final String BEDROOM="bedroom";
+	
 	private double tempKelvinBath = 296.15;
 	private double tempKelvinBed = 293.15;
 	private double tempKelvinLiving = 291.15;
@@ -43,87 +53,81 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 	private double precision = 2;
 
 	/** Field for heaters dependency */
-	@Requires(id = "heat", optional = true)
+	@Requires(id = HEAT, optional = true)
 	private Heater[] heaters;
 
 	/** Field for thermometers dependency */
-	@Requires(id = "thermo", optional = true)
+	@Requires(id = THERMO, optional = true)
 	private Thermometer[] thermometers;
 
 	/** Field for coolers dependency */
-	@Requires(id = "cool", optional = true)
+	@Requires(id = COOL, optional = true)
 	private Cooler[] coolers;
 
 	/** Bind Method for heaters dependency */
-	@Bind(id = "heat")
+	@Bind(id = HEAT)
 	public void bindHeater(Heater heater, Map properties) {
-		System.out.println("bind heater" + heater.getSerialNumber());
+		log.info("bind heater" + heater.getSerialNumber());
 		heater.addListener(this);
 	}
 
 	/** Unbind Method for heaters dependency */
-	@Unbind(id = "heat")
+	@Unbind(id = HEAT)
 	public void unbindHeater(Heater heater, Map properties) {
 		heater.removeListener(this);
 	}
 
 	/** Bind Method for thermometers dependency */
-	@Bind(id = "thermo")
+	@Bind(id = THERMO)
 	public void bindThermometer(Thermometer thermometer, Map properties) {
 		thermometer.addListener(this);
 	}
 
 	/** Unbind Method for thermometers dependency */
-	@Unbind(id = "thermo")
+	@Unbind(id = THERMO)
 	public void unbindThermometer(Thermometer thermometer, Map properties) {
 		thermometer.removeListener(this);
 	}
 
 	/** Bind Method for coolers dependency */
-	@Bind(id = "cool")
+	@Bind(id = COOL)
 	public void bindCooler(Cooler cooler, Map properties) {
 		cooler.addListener(this);
 	}
 
 	/** Unbind Method for coolers dependency */
-	@Unbind(id = "cool")
+	@Unbind(id = COOL)
 	public void unbindCooler(Cooler cooler, Map properties) {
 		cooler.removeListener(this);
 	}
 
 	/** Component Lifecycle Method */
 	public void stop() {
-		// TODO: Add your implementation code here
-		System.out.println("stop temperature\n");
+		log.info("stop temperature\n");
 	}
 
 	/** Component Lifecycle Method */
 	public void start() {
-		// TODO: Add your implementation code here
-		System.out.println("start temperature\n");
+		log.info("start temperature\n");
 	}
 
 	@Override
 	public void deviceAdded(GenericDevice arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void deviceEvent(GenericDevice arg0, Object arg1) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void devicePropertyAdded(GenericDevice arg0, String arg1) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
-		// TODO Auto-generated method stub
 		if (device instanceof Thermometer) {
 			Thermometer thermometer = (Thermometer) device;
 			if (propertyName.equals(Thermometer.LOCATION_PROPERTY_NAME)) {
@@ -133,20 +137,20 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 					if (!coolers.isEmpty() && !heaters.isEmpty()) {
 
 						switch ((String) newValue) {
-						case "kitchen":
+						case KITCHEN:
 							modifyTemperature(thermometer, tempKelvinKitch, coolers, heaters);
 							break;
-						case "bedroom":
+						case BEDROOM:
 							modifyTemperature(thermometer, tempKelvinBed, coolers, heaters);
 							break;
-						case "bathroom":
+						case BATHROOM:
 							modifyTemperature(thermometer, tempKelvinBath, coolers, heaters);
 							break;
-						case "livingroom":
+						case LIVINGROOM:
 							modifyTemperature(thermometer, tempKelvinLiving, coolers, heaters);
 							break;
 						default:
-							System.out.println("Location Unknown");
+							log.info("Location Unknown");
 							break;
 						}
 
@@ -179,20 +183,20 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 						coolers.add(cooler);
 
 						switch ((String) newValue) {
-						case "kitchen":
+						case KITCHEN:
 							modifyTemperature(thermometers.get(0), tempKelvinKitch, coolers, heaters);
 							break;
-						case "bedroom":
+						case BEDROOM:
 							modifyTemperature(thermometers.get(0), tempKelvinBed, coolers, heaters);
 							break;
-						case "bathroom":
+						case BATHROOM:
 							modifyTemperature(thermometers.get(0), tempKelvinBath, coolers, heaters);
 							break;
-						case "livingroom":
+						case LIVINGROOM:
 							modifyTemperature(thermometers.get(0), tempKelvinLiving, coolers, heaters);
 							break;
 						default:
-							System.out.println("Location Unknown");
+							log.info("Location Unknown");
 							break;
 						}
 
@@ -212,20 +216,20 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 						heaters.add(heater);
 
 						switch ((String) newValue) {
-						case "kitchen":
+						case KITCHEN:
 							modifyTemperature(thermometers.get(0), tempKelvinKitch, coolers, heaters);
 							break;
-						case "bedroom":
+						case BEDROOM:
 							modifyTemperature(thermometers.get(0), tempKelvinBed, coolers, heaters);
 							break;
-						case "bathroom":
+						case BATHROOM:
 							modifyTemperature(thermometers.get(0), tempKelvinBath, coolers, heaters);
 							break;
-						case "livingroom":
+						case LIVINGROOM:
 							modifyTemperature(thermometers.get(0), tempKelvinLiving, coolers, heaters);
 							break;
 						default:
-							System.out.println("Location Unknown");
+							log.info("Location Unknown");
 							break;
 						}
 					} else {
@@ -238,20 +242,17 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 
 	@Override
 	public void devicePropertyRemoved(GenericDevice arg0, String arg1) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void deviceRemoved(GenericDevice arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	public void modifyTemperature(Thermometer thermometer, double tempKelvin, List<Cooler> coolers,
 			List<Heater> heaters) {
-		System.out.println(thermometer.getTemperature()
-				+ "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+		log.info(thermometer.getTemperature()+ "\n\n\n");
 		for (Heater heater : heaters) {
 			heater.setPowerLevel(0.0);
 		}
@@ -259,11 +260,11 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 			cooler.setPowerLevel(0.0);
 		}
 		if (thermometer.getTemperature() < (tempKelvin - precision)) {
-			System.out.println("\t active heater \n\t" + (tempKelvin - precision));
+			log.info("\t active heater \n\t" + (tempKelvin - precision));
 			heaters.get(0).setPowerLevel(0.01);
 			coolers.get(0).setPowerLevel(0.0);
 		} else if (thermometer.getTemperature() > (tempKelvin + precision)) {
-			System.out.println("\t active cooler \n\t" + (tempKelvin - precision));
+			log.info("\t active cooler \n\t" + (tempKelvin - precision));
 			heaters.get(0).setPowerLevel(0.0);
 			coolers.get(0).setPowerLevel(0.01);
 		}
@@ -304,27 +305,27 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 
 	@Override
 	public void run() {
-		System.out.println("\n\n\nRun Regulation de temperature dans la piece \n\n");
+		log.info("\n\n\nRun Regulation de temperature dans la piece \n\n");
 		for (Thermometer thermometer : this.thermometers) {
 			String location = (String) thermometer.getPropertyValue(LOCATION_PROPERTY_NAME);
 			if (!location.equals(LOCATION_UNKNOWN) && !getCoolerFromLocation(location).isEmpty()
 					&& !getHeaterFromLocation(location).isEmpty()) {
-				System.out.println("\n\n\nRun Regulation de temperature dans la piece \n" + location + "\n");
+				log.info("\n\n\nRun Regulation de temperature dans la piece \n" + location + "\n");
 
 				switch (location) {
-				case "kitchen":
+				case KITCHEN:
 					modifyTemperature(thermometer, tempKelvinKitch, getCoolerFromLocation(location),
 							getHeaterFromLocation(location));
 					break;
-				case "bedroom":
+				case BEDROOM:
 					modifyTemperature(thermometer, tempKelvinBed, getCoolerFromLocation(location),
 							getHeaterFromLocation(location));
 					break;
-				case "bathroom":
+				case BATHROOM:
 					modifyTemperature(thermometer, tempKelvinBath, getCoolerFromLocation(location),
 							getHeaterFromLocation(location));
 					break;
-				case "livingroom":
+				case LIVINGROOM:
 					modifyTemperature(thermometer, tempKelvinLiving, getCoolerFromLocation(location),
 							getHeaterFromLocation(location));
 					break;
@@ -357,24 +358,20 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 	@Override
 	public void setTargetedTemperature(String targetedRoom, float temperature) {
 		switch (targetedRoom) {
-		case "kitchen":
+		case KITCHEN:
 			this.tempKelvinKitch = temperature + (float) 273.15;
-			System.out.println("Hellooo " + temperature + (float) 273.15 + "\n");
 			break;
-		case "bathroom":
+		case BATHROOM:
 			this.tempKelvinBath = temperature + (float) 273.15;
-			System.out.println("Hellooo " + temperature + (float) 273.15 + "\n");
 			break;
-		case "bedroom":
+		case BEDROOM:
 			this.tempKelvinBed = temperature + (float) 273.15;
-			System.out.println("Hellooo " + temperature + (float) 273.15 + "\n");
 			break;
-		case "livingroom":
+		case LIVINGROOM:
 			this.tempKelvinLiving = temperature + (float) 273.15;
-			System.out.println("Hellooo " + temperature + (float) 273.15 + "\n");
 			break;
 		default:
-			System.out.println("Unknown location");
+			log.info("Unknown location");
 			break;
 		}
 
@@ -383,16 +380,16 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 	@Override
 	public float getTargetedTemperature(String room) {
 		switch (room) {
-		case "kitchen":
+		case KITCHEN:
 			return (float) this.tempKelvinKitch - (float) 273.15;
-		case "bathroom":
+		case BATHROOM:
 			return (float) this.tempKelvinBath - (float) 273.15;
-		case "bedroom":
+		case BEDROOM:
 			return (float) this.tempKelvinBed - (float) 273.15;
-		case "livingroom":
+		case LIVINGROOM:
 			return (float) this.tempKelvinLiving - (float) 273.15;
 		default:
-			System.out.println("Unknown location");
+			log.info("Unknown location");
 			return 0;
 		}
 	}

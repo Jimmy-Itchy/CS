@@ -3,6 +3,7 @@ package org.example.follow.me.regulator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
@@ -11,6 +12,7 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.example.follow.me.api.FollowMeConfiguration;
+import org.example.follow.me.api.RoomEnum;
 
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -25,6 +27,13 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 @Instantiate
 @Provides(specifications = FollowMeConfiguration.class)
 public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfiguration {
+	
+	
+	private static Logger log = Logger.getLogger(LightFollowMeRegulatorImpl.class.getName());
+	
+	private static final String BLIGHT="b-light";
+	private static final String DLIGHT="d-light";
+	private static final String SENSOR="sensor";
 	/**
 	 * The name of the LOCATION property
 	 */
@@ -51,60 +60,60 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 	private double defaultBinaryLightEnergyConsumption = 100.0d;
 
 	/** Field for presenceSensors dependency */
-	@Requires(id = "sensor", optional = true)
+	@Requires(id = SENSOR, optional = true)
 	private PresenceSensor[] presenceSensors;
 
 	/** Field for binaryLights dependency */
-	@Requires(id = "b-light", optional = true)
+	@Requires(id = BLIGHT, optional = true)
 	private BinaryLight[] binaryLights;
 
-	@Requires(id = "d-light", optional = true)
+	@Requires(id = DLIGHT, optional = true)
 	private DimmerLight[] dimmerLights;
 
 	/** Bind Method for binaryLights dependency */
-	@Bind(id = "b-light")
+	@Bind(id = BLIGHT)
 	public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
-		System.out.println("bind binary light " + binaryLight.getSerialNumber());
+		log.info("bind binary light " + binaryLight.getSerialNumber());
 		binaryLight.addListener(this);
 	}
 
 	/** Unbind Method for binaryLights dependency */
-	@Unbind(id = "b-light")
+	@Unbind(id = BLIGHT)
 	public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
-		System.out.println("unbind dimmer light " + binaryLight.getSerialNumber());
+		log.info("unbind dimmer light " + binaryLight.getSerialNumber());
 		binaryLight.removeListener(this);
 	}
 
 	/** Unbind Method for dependency */
-	@Unbind(id = "d-light")
+	@Unbind(id = DLIGHT)
 	public void unbindDimmerLight(DimmerLight dimmerLight, Map properties) {
-		System.out.println("unbind dimmerlight " + dimmerLight.getSerialNumber());
+		log.info("unbind dimmerlight " + dimmerLight.getSerialNumber());
 		dimmerLight.removeListener(this);
 	}
 
-	@Bind(id = "d-light")
+	@Bind(id = DLIGHT)
 	public void bindDimmerLight(DimmerLight dimmerLight, Map properties) {
-		System.out.println("bind dimmer light " + dimmerLight.getSerialNumber());
+		log.info("bind dimmer light " + dimmerLight.getSerialNumber());
 		dimmerLight.addListener(this);
 	}
 
 	/** Bind Method for presenceSensors dependency */
-	@Bind(id = "sensor")
+	@Bind(id = SENSOR)
 	public synchronized void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
-		System.out.println("bind presence sensor " + presenceSensor.getSerialNumber());
+		log.info("bind presence sensor " + presenceSensor.getSerialNumber());
 		presenceSensor.addListener(this);
 	}
 
 	/** Unbind Method for presenceSensors dependency */
-	@Unbind(id = "sensor")
+	@Unbind(id = SENSOR)
 	public synchronized void unbindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
-		System.out.println("Unbind presence sensor " + presenceSensor.getSerialNumber());
+		log.info("Unbind presence sensor " + presenceSensor.getSerialNumber());
 		presenceSensor.removeListener(this);
 	}
 
 	/** Component Lifecycle Method */
 	public synchronized void stop() {
-		System.out.println("Component is stopping...");
+		log.info("Component is stopping...");
 		for (PresenceSensor sensor : presenceSensors) {
 			sensor.removeListener(this);
 		}
@@ -112,24 +121,21 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	/** Component Lifecycle Mef (changingSensor.getSensedPresence()) {thod */
 	public void start() {
-		System.out.println("Component is starting...");
+		log.info("Component is starting...");
 	}
 
 	@Override
 	public void deviceAdded(GenericDevice arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override // Count number of lights on
 	public void deviceEvent(GenericDevice arg0, Object arg1) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void devicePropertyAdded(GenericDevice arg0, String arg1) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -163,7 +169,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 				}
 			}
 		} else if (device instanceof DimmerLight) {
-			System.out.println("light changes\n\n\n");
+			log.info("light changes\n\n\n");
 			DimmerLight changingLight = (DimmerLight) device;
 			if (propertyName.equals(DimmerLight.LOCATION_PROPERTY_NAME)) {
 				// get the location where the light is:
@@ -176,7 +182,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 				}
 			}
 		} else if (device instanceof BinaryLight) {
-			System.out.println("light changes\n\n\n");
+			log.info("light changes\n\n\n");
 			BinaryLight changingLight = (BinaryLight) device;
 			if (propertyName.equals(BinaryLight.LOCATION_PROPERTY_NAME)) {
 				// get the location where the light is:
@@ -193,13 +199,11 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	@Override
 	public void devicePropertyRemoved(GenericDevice arg0, String arg1) {
-		// TODO Auto-generated method stubchangingLight.getSerialNumber()
 
 	}
 
 	@Override
 	public void deviceRemoved(GenericDevice arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -218,8 +222,8 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 		List<DimmerLight> dimmerLightLocation = new ArrayList<DimmerLight>();
 		for (DimmerLight dimLight : dimmerLights) {
-			System.out.println("\n dimmerlight=" + dimmerLightLocation.size()
-					+ "\n\n\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+			log.info("\n dimmerlight=" + dimmerLightLocation.size()
+					+ "\n\n\n");
 			if (dimLight.getPropertyValue(LOCATION_PROPERTY_NAME).equals(location)) {
 				dimmerLightLocation.add(dimLight);
 			}
@@ -238,7 +242,6 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 		List<BinaryLight> binList = getBinaryLightFromLocation(location);
 		List<BinaryLight> binLightsON = new ArrayList<>();
 		for (BinaryLight lights : binList) {
-			System.out.println(lights.getPowerStatus() + "\n\n\n\n");
 			if (lights.getPowerStatus()) {
 				binLightsON.add(lights);
 			}
@@ -259,7 +262,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	private void controlBinaryLightsPerRoom(String location) {
 
-		System.out.println("\n_\n on est dans " + location + "\n\n");
+		log.info("\n_\n on est dans " + location + "\n\n");
 		// get the related binary lightsBinaryLightFollowMeImpl
 		List<BinaryLight> lights = getBinaryLightFromLocation(location);
 		List<PresenceSensor> sensors = getPresenceSensorFromLocation(location);
@@ -283,7 +286,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	private void controlDimmerLightsPerRoom(String location) {
 
-		System.out.println("\n_\n on est dans " + location + "\n\n");
+		log.info("\n_\n on est dans " + location + "\n\n");
 		// get the related binary lights
 		List<DimmerLight> lights = getDimmerLightFromLocation(location);
 		List<PresenceSensor> sensors = getPresenceSensorFromLocation(location);
@@ -307,7 +310,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	private void controlLightsPerRoom(String location) {
 
-		System.out.println("\n_\n on est dans " + location + "\n\n");
+		log.info("\n_\n on est dans " + location + "\n\n");
 		
 		//set maximum lights per room
 		this.maxLightsToTurnOnPerRoom=(int) (maximumEnergyConsumptionAllowedInARoom / defaultBinaryLightEnergyConsumption);
@@ -342,7 +345,6 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 				}
 				if (sizebin < binLights.size() && sizebin + sizedim < maxLightsToTurnOnPerRoom) {
 					binLights.get(sizebin).turnOn();
-					;
 					sizebin++;
 				}
 			}
@@ -358,10 +360,10 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 	@Override
 	public void setMaximumNumberOfLightsToTurnOn(int maximumNumberOfLightsToTurnOn) {
 		this.maxLightsToTurnOnPerRoom = maximumNumberOfLightsToTurnOn;
-		controlLightsPerRoom("kitchen");
-		controlLightsPerRoom("livingroom");
-		controlLightsPerRoom("bedroom");
-		controlLightsPerRoom("bathroom");
+		controlLightsPerRoom(RoomEnum.KITCHEN.getName());
+		controlLightsPerRoom(RoomEnum.LIVINGROOM.getName());
+		controlLightsPerRoom(RoomEnum.BEDROOM.getName());
+		controlLightsPerRoom(RoomEnum.BATHROOM.getName());
 	}
 
 	@Override
@@ -375,7 +377,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 			this.maximumEnergyConsumptionAllowedInARoom = maximumEnergy;
 			setMaximumNumberOfLightsToTurnOn((int) (maximumEnergy / defaultBinaryLightEnergyConsumption));
 		} else {
-			// TODO rise Exception
+			log.info("\nexception : Energie inferieur au minimum\n");
 		}
 	}
 }

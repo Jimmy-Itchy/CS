@@ -1,6 +1,7 @@
 package org.example.follow.me.manager;
 
 import java.util.Map;
+import java.util.logging.*;
 
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
@@ -21,48 +22,48 @@ import org.example.follow.me.api.TemperatureConfiguration;
 @Instantiate
 @Provides(specifications = FollowMeAdministration.class)
 public class LightFollowMeManagerImpl implements FollowMeAdministration {
+	
+	private static Logger log = Logger.getLogger(LightFollowMeManagerImpl.class.getName());
+	
+	private static final String CONF="conf";
+	private static final String CONFT="conft";
 
 	/** Field for followMeConfiguration dependency */
-	@Requires(id = "conf", optional = true) // pas besoin de preciser il est
-											// solo
+	@Requires(id = CONF, optional = true) 
 	private FollowMeConfiguration[] followMeConfiguration;
 
 	/** Bind Method for followMeConfiguration dependency */
-	@Bind(id = "conf")
+	@Bind(id = CONF)
 	public void bindFollowMeConfiguration(FollowMeConfiguration followMeConfiguration, Map properties) {
 	}
 
 	/** Unbind Method for followMeConfiguration dependency */
-	@Unbind(id = "conf")
+	@Unbind(id = CONFT)
 	public void unbindFollowMeConfiguration(FollowMeConfiguration followMeConfiguration, Map properties) {
-		// TODO: Add your implementation code here
 	}
 	
 	/** Field for followMeConfiguration dependency */
-	@Requires(id = "confT", optional = true) // pas besoin de preciser il est
-											// solo
+	@Requires(id = CONFT, optional = true)
 	private TemperatureConfiguration[] temperatureConfigurations;
 
 	/** Bind Method for followMeConfiguration dependency */
-	@Bind(id = "confT")
+	@Bind(id = CONFT)
 	public void bindTemperatureConfiguration(TemperatureConfiguration temperatureConfiguration, Map properties) {
 	}
 
 	/** Unbind Method for followMeConfiguration dependency */
-	@Unbind(id = "confT")
+	@Unbind(id = CONFT)
 	public void unbindTemperatureConfiguration(TemperatureConfiguration temperatureConfiguration, Map properties) {
-		// TODO: Add your implementation code here
 	}
 
 	/** Component Lifecycle Method */
 	public void stop() {
-		// TODO: Add your implementation code here
+		log.info("stop manager....\n");
 	}
 
 	/** Component Lifecycle Method */
 	public void start() {
-		// TODO: Add your implementation code here
-		System.out.println("start manager....\n");
+		log.info("start manager....\n");
 	}
 
 	@Override
@@ -104,28 +105,28 @@ public class LightFollowMeManagerImpl implements FollowMeAdministration {
 	}
 
 	@Override
-	public void temperatureIsTooHigh(String roomName) {
+	public synchronized void temperatureIsTooHigh(String roomName) {
 		float currentTemp = temperatureConfigurations[0].getTargetedTemperature(roomName);
 		temperatureConfigurations[0].setTargetedTemperature(roomName, currentTemp - 5);
 		while (temperatureConfigurations[0].getTargetedTemperature(roomName) >= currentTemp - 5) {
 			try {
 				wait(1000);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.log(Level.WARNING,"\nexception wait\n",e);
 			}
 		}
 	}
 
 	@Override
-	public void temperatureIsTooLow(String roomName) {
-		System.out.println("\n\n\n changement de température:"+ roomName+"\n\n\n");
+	public synchronized void temperatureIsTooLow(String roomName) {
+		log.info("\n\n\n changement de température:"+ roomName+"\n\n");
 		float currentTemp = temperatureConfigurations[0].getTargetedTemperature(roomName);
 		temperatureConfigurations[0].setTargetedTemperature(roomName, currentTemp + 5);
 		while (temperatureConfigurations[0].getTargetedTemperature(roomName) <= currentTemp + 5) {
 			try {
 				wait(1000);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.log(Level.WARNING,"\nexception wait\n",e);
 			}
 		}
 

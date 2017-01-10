@@ -1,6 +1,7 @@
 package org.example.follow.me.manager.command;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
@@ -23,32 +24,37 @@ import fr.liglab.adele.icasa.command.handler.CommandProvider;
 @CommandProvider(namespace = "followme")
 public class FollowMeManagerCommandImpl {
 
+	private static Logger log = Logger.getLogger(FollowMeManagerCommandImpl.class.getName());
+	
+	private static final String ADMIN="admin";
+	private static final String SOFT="SOFT";
+	private static final String MEDIUM="MEDIUM";
+	private static final String HIGH="HIGH";
+	private static final String LOW="LOW";
+	
 	/** Field for followMeCommand dependency */
 	// Declare a dependency to a FollowMeAdministration service
 	@Requires(id="admin", optional=true)
 	private FollowMeAdministration m_administrationService;
 
 	/** Bind Method for followMeCommand dependency */
-	@Bind(id="admin")
+	@Bind(id=ADMIN)
 	public void bindFollowMeCommand(FollowMeAdministration followMeAdministration, Map properties) {
-		// TODO: Add your implementation code here
 	}
 
 	/** Unbind Method for followMeCommand dependency */
-	@Unbind(id="admin")
+	@Unbind(id=ADMIN)
 	public void unbindFollowMeCommand(FollowMeAdministration followMeAdministration, Map properties) {
-		// TODO: Add your implementation code here
 	}
 
 	/** Component Lifecycle Method */
 	public void stop() {
-		// TODO: Add your implementation code here
+		log.info("stop command\n");
 	}
 
 	/** Component Lifecycle Method */
 	public void start() {
-		// TODO: Add your implementation code here
-		System.out.println("start command\n");
+		log.info("start command\n");
 	}
 
 	/**
@@ -64,25 +70,23 @@ public class FollowMeManagerCommandImpl {
 		// The targeted goal
 		// IlluminanceGoal illuminanceGoal;
 
-		// TODO : Here you have to convert the goal string into an illuminance
 		// goal and fail if the entry is not "SOFT", "MEDIUM" or "HIGH"
-		String soft = new String("SOFT");
-		if (new String("SOFT").equals(goal)) {
+		String soft = SOFT;
+		if (SOFT.equals(goal)) {
 			m_administrationService.setIlluminancePreference(IlluminanceGoal.SOFT);
-		} else if (new String("MEDIUM").equals(goal)) {
+		} else if (MEDIUM.equals(goal)) {
 			m_administrationService.setIlluminancePreference(IlluminanceGoal.MEDIUM);
-		} else if (new String("HIGH").equals(goal)) {
+		} else if (HIGH.equals(goal)) {
 			m_administrationService.setIlluminancePreference(IlluminanceGoal.FULL);
 		} else {
-			System.out.println("Incorrect command please retry\n");
+			log.info("Incorrect command please retry\n");
 		}
 
 	}
 
 	@Command
 	public void getIlluminancePreference() {
-		// TODO : implement the command that print the current value of the goal
-		System.out.println("The illuminance goal is " + m_administrationService.getIlluminancePreference().toString());
+		log.info("The illuminance goal is " + m_administrationService.getIlluminancePreference().toString());
 	}
 	
 	
@@ -91,25 +95,23 @@ public class FollowMeManagerCommandImpl {
 		// The targeted goal
 		// IlluminanceGoal illuminanceGoal;
 
-		// TODO : Here you have to convert the goal string into an illuminance
 		// goal and fail if the entry is not "SOFT", "MEDIUM" or "HIGH"
-		String soft = new String("LOW");
-		if (new String("LOW").equals(goal)) {
+		String soft = LOW;
+		if (LOW.equals(goal)) {
 			m_administrationService.setEnergySavingGoal(EnergyGoal.LOW);
-		} else if (new String("MEDIUM").equals(goal)) {
+		} else if (MEDIUM.equals(goal)) {
 			m_administrationService.setEnergySavingGoal(EnergyGoal.MEDIUM);
-		} else if (new String("HIGH").equals(goal)) {
+		} else if (HIGH.equals(goal)) {
 			m_administrationService.setEnergySavingGoal(EnergyGoal.HIGH);
 		} else {
-			System.out.println("Incorrect command please retry\n");
+			log.info("Incorrect command please retry\n");
 		}
 
 	}
 
 	@Command
 	public void getEnergyGoalPreference() {
-		// TODO : implement the command that print the current value of the goal
-		System.out.println("The energy goal is " + m_administrationService.getEnergyGoal().toString());
+		log.info("The energy goal is " + m_administrationService.getEnergyGoal().toString());
 	}
 	
 	 // Each command should start with a @Command annotation
