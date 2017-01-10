@@ -253,7 +253,7 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 
 	public void modifyTemperature(Thermometer thermometer, double tempKelvin, List<Cooler> coolers,
 			List<Heater> heaters) {
-		log.log(Level.INFO,"\n Temperature=%s\n",thermometer.getTemperature());
+		log.log(Level.INFO,"\n Temperature=%d\n",thermometer.getTemperature());
 		for (Heater heater : heaters) {
 			heater.setPowerLevel(0.0);
 		}

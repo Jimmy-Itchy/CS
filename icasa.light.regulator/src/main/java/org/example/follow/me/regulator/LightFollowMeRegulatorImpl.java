@@ -314,7 +314,8 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 		//set maximum lights per room
 		this.maxLightsToTurnOnPerRoom=(int) (maximumEnergyConsumptionAllowedInARoom / defaultBinaryLightEnergyConsumption);
 		
-		log.info("\n_\n on est dans la piece:" + location + "\n\n"+maxLightsToTurnOnPerRoom+"\n\n\n\n");
+		log.log(Level.INFO,"\n_\n on est dans la piece:%s\n\n",location);
+		log.log(Level.INFO,"\n\n%s\n",maxLightsToTurnOnPerRoom);
 		// get the related binary lights
 		List<DimmerLight> lights = getDimmerLightFromLocation(location);
 		List<BinaryLight> binLights = getBinaryLightFromLocation(location);
