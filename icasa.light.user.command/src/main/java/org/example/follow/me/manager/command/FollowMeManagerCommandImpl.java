@@ -1,6 +1,7 @@
 package org.example.follow.me.manager.command;
 
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.felix.ipojo.annotations.Bind;
@@ -11,6 +12,7 @@ import org.apache.felix.ipojo.annotations.Unbind;
 import org.example.follow.me.api.EnergyGoal;
 import org.example.follow.me.api.FollowMeAdministration;
 import org.example.follow.me.api.IlluminanceGoal;
+import org.example.follow.me.api.ManagerException;
 
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
@@ -71,7 +73,6 @@ public class FollowMeManagerCommandImpl {
 		// IlluminanceGoal illuminanceGoal;
 
 		// goal and fail if the entry is not "SOFT", "MEDIUM" or "HIGH"
-		String soft = SOFT;
 		if (SOFT.equals(goal)) {
 			m_administrationService.setIlluminancePreference(IlluminanceGoal.SOFT);
 		} else if (MEDIUM.equals(goal)) {
@@ -96,7 +97,6 @@ public class FollowMeManagerCommandImpl {
 		// IlluminanceGoal illuminanceGoal;
 
 		// goal and fail if the entry is not "SOFT", "MEDIUM" or "HIGH"
-		String soft = LOW;
 		if (LOW.equals(goal)) {
 			m_administrationService.setEnergySavingGoal(EnergyGoal.LOW);
 		} else if (MEDIUM.equals(goal)) {
@@ -116,13 +116,23 @@ public class FollowMeManagerCommandImpl {
 	
 	 // Each command should start with a @Command annotation
     @Command
-    public void tempTooHigh(String room) {
-        m_administrationService.temperatureIsTooHigh(room);
+    public void tempTooHigh(String room) throws CommandException {
+        try {
+			m_administrationService.temperatureIsTooHigh(room);
+		} catch (ManagerException e) {
+			log.log(Level.WARNING,"\nexception manager\n",e);
+			throw new CommandException("Exception Commande");
+		}
     }
  
     @Command
-    public void tempTooLow(String room){
-    	m_administrationService.temperatureIsTooLow(room);
+    public void tempTooLow(String room) throws CommandException{
+    	try {
+			m_administrationService.temperatureIsTooLow(room);
+		} catch (ManagerException e) {
+			log.log(Level.WARNING,"\nexception manager\n",e);
+			throw new CommandException("Exception Commande");
+		}
     }
 	
 

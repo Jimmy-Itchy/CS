@@ -14,6 +14,7 @@ import org.example.follow.me.api.EnergyGoal;
 import org.example.follow.me.api.FollowMeAdministration;
 import org.example.follow.me.api.FollowMeConfiguration;
 import org.example.follow.me.api.IlluminanceGoal;
+import org.example.follow.me.api.ManagerException;
 import org.example.follow.me.api.TemperatureConfiguration;
 
 /**
@@ -74,7 +75,6 @@ public class LightFollowMeManagerImpl implements FollowMeAdministration {
 
 	@Override
 	public IlluminanceGoal getIlluminancePreference() {
-		log.info("\n\n+++"+followMeConfiguration[0].getMaximumNumberOfLightsToTurnOn()+"\n\n");
 		if(followMeConfiguration[0].getMaximumNumberOfLightsToTurnOn()<3) {
 			return IlluminanceGoal.SOFT;
 		}else if(followMeConfiguration[0].getMaximumNumberOfLightsToTurnOn()<6) {
@@ -107,7 +107,7 @@ public class LightFollowMeManagerImpl implements FollowMeAdministration {
 	}
 
 	@Override
-	public synchronized void temperatureIsTooHigh(String roomName) {
+	public synchronized void temperatureIsTooHigh(String roomName) throws ManagerException{
 		float currentTemp = temperatureConfigurations[0].getTargetedTemperature(roomName);
 		temperatureConfigurations[0].setTargetedTemperature(roomName, currentTemp - 5);
 		while (temperatureConfigurations[0].getTargetedTemperature(roomName) >= currentTemp - 5) {
@@ -115,12 +115,13 @@ public class LightFollowMeManagerImpl implements FollowMeAdministration {
 				wait(1000);
 			} catch (InterruptedException e) {
 				log.log(Level.WARNING,"\nexception wait\n",e);
+				throw new ManagerException("Exception");
 			}
 		}
 	}
 
 	@Override
-	public synchronized void temperatureIsTooLow(String roomName) {
+	public synchronized void temperatureIsTooLow(String roomName) throws ManagerException{
 		log.info("\n\n\n changement de température:"+ roomName+"\n\n");
 		float currentTemp = temperatureConfigurations[0].getTargetedTemperature(roomName);
 		temperatureConfigurations[0].setTargetedTemperature(roomName, currentTemp + 5);
@@ -129,6 +130,7 @@ public class LightFollowMeManagerImpl implements FollowMeAdministration {
 				wait(1000);
 			} catch (InterruptedException e) {
 				log.log(Level.WARNING,"\nexception wait\n",e);
+				throw new ManagerException("Exception");
 			}
 		}
 

@@ -40,8 +40,9 @@ public interface FollowMeAdministration {
      * 
      * @param roomName
      *            the room where the temperature should be reconfigured
+     * @throws ManagerException 
      */
-    public void temperatureIsTooHigh(String roomName);
+    public void temperatureIsTooHigh(String roomName) throws ManagerException;
  
     /**
      * This method is called every time a user think the temperature is too high
@@ -49,6 +50,7 @@ public interface FollowMeAdministration {
      * 
      * @param roomName
      *            the room where the temperature should be reconfigured
+     * @throws ManagerException 
      */
-    public void temperatureIsTooLow(String roomName);
+    public void temperatureIsTooLow(String roomName) throws ManagerException;
 }
