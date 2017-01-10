@@ -261,7 +261,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	private void controlBinaryLightsPerRoom(String location) {
 
-		log.log(Level.INFO,"\n_\n on est dans:%s\n",location);
+		log.info("\n_\n on est dans:"+location+"\n");
 		// get the related binary lightsBinaryLightFollowMeImpl
 		List<BinaryLight> lights = getBinaryLightFromLocation(location);
 		List<PresenceSensor> sensors = getPresenceSensorFromLocation(location);
@@ -285,7 +285,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	private void controlDimmerLightsPerRoom(String location) {
 
-		log.log(Level.INFO,"\n_\n on est dans:%s\n",location);
+		log.info("\n_\n on Est dans:"+location+"\n");
 		// get the related binary lights
 		List<DimmerLight> lights = getDimmerLightFromLocation(location);
 		List<PresenceSensor> sensors = getPresenceSensorFromLocation(location);
@@ -309,13 +309,12 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	private void controlLightsPerRoom(String location) {
 
-		log.log(Level.INFO,"\n_\n on est dans:%s\n\n",location);
+		log.info("\n_\n on est dans:"+location+"\n");
 		
 		//set maximum lights per room
 		this.maxLightsToTurnOnPerRoom=(int) (maximumEnergyConsumptionAllowedInARoom / defaultBinaryLightEnergyConsumption);
 		
-		log.log(Level.INFO,"\n_\n on est dans la piece:%s\n\n",location);
-		log.log(Level.INFO,"\n\n%s\n",maxLightsToTurnOnPerRoom);
+		log.info("\n_\n on est dans:"+location+maxLightsToTurnOnPerRoom+" \n");
 		// get the related binary lights
 		List<DimmerLight> lights = getDimmerLightFromLocation(location);
 		List<BinaryLight> binLights = getBinaryLightFromLocation(location);

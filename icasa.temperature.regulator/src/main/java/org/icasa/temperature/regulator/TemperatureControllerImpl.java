@@ -68,7 +68,7 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 	/** Bind Method for heaters dependency */
 	@Bind(id = HEAT)
 	public void bindHeater(Heater heater, Map properties) {
-		log.log(Level.INFO,"bind heater %s", heater.getSerialNumber());
+		log.info("bind heater ");
 		heater.addListener(this);
 	}
 
@@ -253,7 +253,7 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 
 	public void modifyTemperature(Thermometer thermometer, double tempKelvin, List<Cooler> coolers,
 			List<Heater> heaters) {
-		log.log(Level.INFO,"\n Temperature=%d\n",thermometer.getTemperature());
+		log.info("\n Temperature= "+thermometer.getTemperature());
 		for (Heater heater : heaters) {
 			heater.setPowerLevel(0.0);
 		}
@@ -261,11 +261,11 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 			cooler.setPowerLevel(0.0);
 		}
 		if (thermometer.getTemperature() < (tempKelvin - precision)) {
-			log.log(Level.INFO,"\t active heater %s\n\t" , (tempKelvin - precision));
+			log.info("\t active heater %s\n\t" + (tempKelvin - precision));
 			heaters.get(0).setPowerLevel(0.01);
 			coolers.get(0).setPowerLevel(0.0);
 		} else if (thermometer.getTemperature() > (tempKelvin + precision)) {
-			log.log(Level.INFO,"\t active heater %s\n\t" , (tempKelvin - precision));
+			log.info("\t active heater %s\n\t" + (tempKelvin - precision));
 			heaters.get(0).setPowerLevel(0.0);
 			coolers.get(0).setPowerLevel(0.01);
 		}
@@ -311,7 +311,7 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 			String location = (String) thermometer.getPropertyValue(LOCATION_PROPERTY_NAME);
 			if (!location.equals(LOCATION_UNKNOWN) && !getCoolerFromLocation(location).isEmpty()
 					&& !getHeaterFromLocation(location).isEmpty()) {
-				log.log(Level.INFO,"\n\n\nRun Regulation de temperature dans la piece %s\n",location);
+				log.info("\n\n\nRun Regulation de temperature dans la piece "+location);
 
 				switch (location) {
 				case KITCHEN:
