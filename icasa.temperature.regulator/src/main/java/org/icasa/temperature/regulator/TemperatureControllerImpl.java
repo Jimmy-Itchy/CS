@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.example.temperature.configuration.TemperatureConfiguration;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
+import org.example.follow.me.api.TemperatureConfiguration;
 
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -19,7 +22,7 @@ import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 
 @Component
 @Instantiate
-@Provides(specifications=TemperatureConfiguration.class)
+@Provides(specifications = {TemperatureConfiguration.class,PeriodicRunnable.class})
 public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnable, TemperatureConfiguration {
 
 	/**
@@ -32,13 +35,6 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 	 */
 	public static final String LOCATION_UNKNOWN = "unknown";
 
-	/** Field for heaters dependency */
-	private Heater[] heaters;
-	/** Field for thermometers dependency */
-	private Thermometer[] thermometers;
-	/** Field for coolers dependency */
-	private Cooler[] coolers;
-
 	private double tempKelvinBath = 296.15;
 	private double tempKelvinBed = 293.15;
 	private double tempKelvinLiving = 291.15;
@@ -46,33 +42,51 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 
 	private double precision = 2;
 
+	/** Field for heaters dependency */
+	@Requires(id = "heat", optional = true)
+	private Heater[] heaters;
+
+	/** Field for thermometers dependency */
+	@Requires(id = "thermo", optional = true)
+	private Thermometer[] thermometers;
+
+	/** Field for coolers dependency */
+	@Requires(id = "cool", optional = true)
+	private Cooler[] coolers;
+
 	/** Bind Method for heaters dependency */
+	@Bind(id = "heat")
 	public void bindHeater(Heater heater, Map properties) {
 		System.out.println("bind heater" + heater.getSerialNumber());
 		heater.addListener(this);
 	}
 
 	/** Unbind Method for heaters dependency */
+	@Unbind(id = "heat")
 	public void unbindHeater(Heater heater, Map properties) {
 		heater.removeListener(this);
 	}
 
 	/** Bind Method for thermometers dependency */
+	@Bind(id = "thermo")
 	public void bindThermometer(Thermometer thermometer, Map properties) {
 		thermometer.addListener(this);
 	}
 
 	/** Unbind Method for thermometers dependency */
+	@Unbind(id = "thermo")
 	public void unbindThermometer(Thermometer thermometer, Map properties) {
 		thermometer.removeListener(this);
 	}
 
 	/** Bind Method for coolers dependency */
+	@Bind(id = "cool")
 	public void bindCooler(Cooler cooler, Map properties) {
 		cooler.addListener(this);
 	}
 
 	/** Unbind Method for coolers dependency */
+	@Unbind(id = "cool")
 	public void unbindCooler(Cooler cooler, Map properties) {
 		cooler.removeListener(this);
 	}
@@ -290,11 +304,12 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 
 	@Override
 	public void run() {
+		System.out.println("\n\n\nRun Regulation de temperature dans la piece \n\n");
 		for (Thermometer thermometer : this.thermometers) {
 			String location = (String) thermometer.getPropertyValue(LOCATION_PROPERTY_NAME);
 			if (!location.equals(LOCATION_UNKNOWN) && !getCoolerFromLocation(location).isEmpty()
 					&& !getHeaterFromLocation(location).isEmpty()) {
-				System.out.println("Run Regulation de temperature dans la piece \n" + location + "\n");
+				System.out.println("\n\n\nRun Regulation de temperature dans la piece \n" + location + "\n");
 
 				switch (location) {
 				case "kitchen":

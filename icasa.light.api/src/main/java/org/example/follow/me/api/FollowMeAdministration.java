@@ -21,4 +21,34 @@ public interface FollowMeAdministration {
      */
     public IlluminanceGoal getIlluminancePreference();
 
+    /**
+     * Configure the energy saving goal.
+     * @param energyGoal : the targeted energy goal.
+     */
+    public void setEnergySavingGoal(EnergyGoal energyGoal);
+ 
+    /**
+     * Gets the current energy goal.
+     * 
+     * @return the current energy goal.
+     */
+    public EnergyGoal getEnergyGoal();
+    
+    /**
+     * This method is called every time a user think the temperature is too high
+     * in a given room.
+     * 
+     * @param roomName
+     *            the room where the temperature should be reconfigured
+     */
+    public void temperatureIsTooHigh(String roomName);
+ 
+    /**
+     * This method is called every time a user think the temperature is too high
+     * in a given room.
+     * 
+     * @param roomName
+     *            the room where the temperature should be reconfigured
+     */
+    public void temperatureIsTooLow(String roomName);
 }
