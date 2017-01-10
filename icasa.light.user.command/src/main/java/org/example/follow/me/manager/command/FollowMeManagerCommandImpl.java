@@ -89,8 +89,7 @@ public class FollowMeManagerCommandImpl {
 
 	@Command
 	public void getIlluminancePreference() {
-		String getteur=m_administrationService.getIlluminancePreference().toString();
-		log.info("\nThe illuminance goal is " + getteur);
+		log.log(Level.INFO,"\nThe illuminance goal is :%s",m_administrationService.getIlluminancePreference().toString());
 	}
 	
 	
@@ -114,8 +113,7 @@ public class FollowMeManagerCommandImpl {
 
 	@Command
 	public void getEnergyGoalPreference() {
-		String getteur=m_administrationService.getEnergyGoal().toString();
-		log.info("\nThe energy goal is :" +getteur );
+		log.log(Level.INFO,"\nThe energy goal is :%s",m_administrationService.getEnergyGoal().toString());
 	}
 	
 	 // Each command should start with a @Command annotation

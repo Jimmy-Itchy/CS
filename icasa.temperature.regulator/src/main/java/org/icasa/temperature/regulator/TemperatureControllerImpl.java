@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.felix.ipojo.annotations.Bind;
@@ -67,7 +68,7 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 	/** Bind Method for heaters dependency */
 	@Bind(id = HEAT)
 	public void bindHeater(Heater heater, Map properties) {
-		log.info("bind heater" + heater.getSerialNumber());
+		log.log(Level.INFO,"bind heater %s", heater.getSerialNumber());
 		heater.addListener(this);
 	}
 
@@ -252,7 +253,7 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 
 	public void modifyTemperature(Thermometer thermometer, double tempKelvin, List<Cooler> coolers,
 			List<Heater> heaters) {
-		log.info(thermometer.getTemperature()+ "\n\n\n");
+		log.log(Level.INFO,"\n Temperature=%s\n",thermometer.getTemperature());
 		for (Heater heater : heaters) {
 			heater.setPowerLevel(0.0);
 		}
@@ -260,11 +261,11 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 			cooler.setPowerLevel(0.0);
 		}
 		if (thermometer.getTemperature() < (tempKelvin - precision)) {
-			log.info("\t active heater \n\t" + (tempKelvin - precision));
+			log.log(Level.INFO,"\t active heater %s\n\t" , (tempKelvin - precision));
 			heaters.get(0).setPowerLevel(0.01);
 			coolers.get(0).setPowerLevel(0.0);
 		} else if (thermometer.getTemperature() > (tempKelvin + precision)) {
-			log.info("\t active cooler \n\t" + (tempKelvin - precision));
+			log.log(Level.INFO,"\t active heater %s\n\t" , (tempKelvin - precision));
 			heaters.get(0).setPowerLevel(0.0);
 			coolers.get(0).setPowerLevel(0.01);
 		}
@@ -310,7 +311,7 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 			String location = (String) thermometer.getPropertyValue(LOCATION_PROPERTY_NAME);
 			if (!location.equals(LOCATION_UNKNOWN) && !getCoolerFromLocation(location).isEmpty()
 					&& !getHeaterFromLocation(location).isEmpty()) {
-				log.info("\n\n\nRun Regulation de temperature dans la piece \n" + location + "\n");
+				log.log(Level.INFO,"\n\n\nRun Regulation de temperature dans la piece %s\n",location);
 
 				switch (location) {
 				case KITCHEN:
@@ -330,7 +331,7 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 							getHeaterFromLocation(location));
 					break;
 				default:
-					System.out.println("Location Unknown");
+					log.info("Location unknown");
 					break;
 				}
 
@@ -371,7 +372,7 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 			this.tempKelvinLiving = temperature + (float) 273.15;
 			break;
 		default:
-			log.info("Unknown location");
+			log.info("unknown location");
 			break;
 		}
 
@@ -389,7 +390,7 @@ public class TemperatureControllerImpl implements DeviceListener, PeriodicRunnab
 		case LIVINGROOM:
 			return (float) this.tempKelvinLiving - (float) 273.15;
 		default:
-			log.info("Unknown location");
+			log.info("UnknOwn location");
 			return 0;
 		}
 	}

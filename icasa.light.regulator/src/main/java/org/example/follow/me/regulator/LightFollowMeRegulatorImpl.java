@@ -3,6 +3,7 @@ package org.example.follow.me.regulator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.felix.ipojo.annotations.Bind;
@@ -260,7 +261,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	private void controlBinaryLightsPerRoom(String location) {
 
-		log.info("\n_\n on est dans " + location + "\n\n");
+		log.log(Level.INFO,"\n_\n on est dans:%s\n",location);
 		// get the related binary lightsBinaryLightFollowMeImpl
 		List<BinaryLight> lights = getBinaryLightFromLocation(location);
 		List<PresenceSensor> sensors = getPresenceSensorFromLocation(location);
@@ -284,7 +285,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	private void controlDimmerLightsPerRoom(String location) {
 
-		log.info("\n_\n on est dans room:" + location + "\n\n");
+		log.log(Level.INFO,"\n_\n on est dans:%s\n",location);
 		// get the related binary lights
 		List<DimmerLight> lights = getDimmerLightFromLocation(location);
 		List<PresenceSensor> sensors = getPresenceSensorFromLocation(location);
@@ -308,7 +309,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 
 	private void controlLightsPerRoom(String location) {
 
-		log.info("\n_\n on est dans " + location + "\n\n");
+		log.log(Level.INFO,"\n_\n on est dans:%s\n\n",location);
 		
 		//set maximum lights per room
 		this.maxLightsToTurnOnPerRoom=(int) (maximumEnergyConsumptionAllowedInARoom / defaultBinaryLightEnergyConsumption);
