@@ -8,9 +8,9 @@ public enum IlluminanceGoal {
     /** The goal associated with soft illuminance. */
     SOFT(1),
     /** The goal associated with medium illuminance. */
-    MEDIUM(2),
+    MEDIUM(5),
     /** The goal associated with full illuminance. */
-    FULL(3);
+    FULL(10);
 
     /** The number of lights to turn on. */
     private int numberOfLightsToTurnOn;

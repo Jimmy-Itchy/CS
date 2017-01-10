@@ -1,7 +1,8 @@
 package org.example.follow.me.manager;
 
 import java.util.Map;
-import java.util.logging.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
@@ -38,7 +39,7 @@ public class LightFollowMeManagerImpl implements FollowMeAdministration {
 	}
 
 	/** Unbind Method for followMeConfiguration dependency */
-	@Unbind(id = CONFT)
+	@Unbind(id = CONF)
 	public void unbindFollowMeConfiguration(FollowMeConfiguration followMeConfiguration, Map properties) {
 	}
 	
@@ -73,14 +74,15 @@ public class LightFollowMeManagerImpl implements FollowMeAdministration {
 
 	@Override
 	public IlluminanceGoal getIlluminancePreference() {
-		switch (followMeConfiguration[0].getMaximumNumberOfLightsToTurnOn()) {
-		case 1:
+		log.info("\n\n+++"+followMeConfiguration[0].getMaximumNumberOfLightsToTurnOn()+"\n\n");
+		if(followMeConfiguration[0].getMaximumNumberOfLightsToTurnOn()<3) {
 			return IlluminanceGoal.SOFT;
-		case 2:
+		}else if(followMeConfiguration[0].getMaximumNumberOfLightsToTurnOn()<6) {
 			return IlluminanceGoal.MEDIUM;
-		case 3:
+		}else if(followMeConfiguration[0].getMaximumNumberOfLightsToTurnOn()>=6) {
 			return IlluminanceGoal.FULL;
-		default:
+		}else{
+			log.info("\n Mauviase illuminance goal\n");
 			return null;
 		}
 	}
