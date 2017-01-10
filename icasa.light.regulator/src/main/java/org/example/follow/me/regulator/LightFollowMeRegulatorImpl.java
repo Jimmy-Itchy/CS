@@ -73,7 +73,7 @@ public class LightFollowMeRegulatorImpl implements DeviceListener, FollowMeConfi
 	/** Bind Method for binaryLights dependency */
 	@Bind(id = BLIGHT)
 	public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
-		log.info("bind binary light " + binaryLight.getSerialNumber());
+		log.info("bind binary light "+ binaryLight.getSerialNumber());
 		binaryLight.addListener(this);
 	}
 

@@ -36,7 +36,7 @@ public class FollowMeManagerCommandImpl {
 	
 	/** Field for followMeCommand dependency */
 	// Declare a dependency to a FollowMeAdministration service
-	@Requires(id="admin", optional=true)
+	@Requires(id=ADMIN, optional=true)
 	private FollowMeAdministration m_administrationService;
 
 	/** Bind Method for followMeCommand dependency */

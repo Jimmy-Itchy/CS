@@ -122,7 +122,6 @@ public class LightFollowMeManagerImpl implements FollowMeAdministration {
 
 	@Override
 	public synchronized void temperatureIsTooLow(String roomName) throws ManagerException{
-		log.info("\n\n\n changement de température:"+ roomName+"\n\n");
 		float currentTemp = temperatureConfigurations[0].getTargetedTemperature(roomName);
 		temperatureConfigurations[0].setTargetedTemperature(roomName, currentTemp + 5);
 		while (temperatureConfigurations[0].getTargetedTemperature(roomName) <= currentTemp + 5) {
